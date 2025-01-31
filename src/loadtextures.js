@@ -1,50 +1,36 @@
-import { exp } from "three/tsl";
 import * as THREE from 'three';
 
-
-
-
+// Load the texture
 const loader = new THREE.TextureLoader();
-const grassTexture = loader.load('textures/gass.jpg');   // Grass/Soil texture
-const waterTexture = loader.load('textures/water.jpg'); // Ocean texture
-const snowTexture = loader.load('textures/snow.jpg');   // Snowy mountain texture
-
-const terrainMaterial = new THREE.MeshStandardMaterial({
-    roughness: 0.8,    // Rough surface
-    metalness: 0.1,    // Less metallic
-    color: 0x2d3e2f,   // Earthy color
-    emissive: 0x0a3a2a, // Slight ambient light 
-    normalScale: new THREE.Vector2(1, 1),  // Intensity of the normal map
-    wireframe: true,
+const landTexture = loader.load(
+    'textures/land.jpg', // Ensure this path is correct
+    () => {
+      console.log("Land texture loaded successfully");
+    },
+    undefined,
+    (err) => {
+      console.error("Error loading land texture:", err);
+    }
+  );
+// Create a basic material with the grass texture
+const terrainMaterial = new THREE.MeshBasicMaterial({
+  map: landTexture,
+  side: THREE.FrontSide, // Make sure we apply the texture to the front face of the geometry
 });
 
-// Apply the textures based on height values 
+// Function to apply the material to the terrain geometry
 function applyTexturesToTerrain(geometry) {
-    const position = geometry.attributes.position;
-    
-    for (let i = 0; i < position.count; i++) {
-        const height = position.getZ(i);
-        let texture;
+  // Check if UVs exist, if not, create default ones
+  if (!geometry.attributes.uv) {
+    console.warn("UVs not found on geometry. Applying default UVs.");
+    geometry.computeVertexNormals();
+    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(geometry.attributes.position.count * 2), 2));
+  }
 
-        // Use water texture for lower heights
-        if (height < -5) {
-            texture = waterTexture;
-        } 
-        // Use snow texture for higher heights
-        else if (height > 15) {
-            texture = snowTexture;
-        }
-        // Use land/grass texture for medium heights
-        else {
-            texture = grassTexture;
-        }
-
-        // Set the texture for each vertex with UV Mapping
-        geometry.attributes.uv = new THREE.BufferAttribute(new Float32Array(position.count * 2), 2);
-        const uv = geometry.attributes.uv;
-        uv.setXY(i, position.getX(i) / 200, position.getY(i) / 200); 
-    }
+  // Apply the material to the geometry and return the mesh
+  const terrainMesh = new THREE.Mesh(geometry, terrainMaterial);
+  return terrainMesh;
 }
 
-export { applyTexturesToTerrain }
-export { terrainMaterial }
+export { applyTexturesToTerrain };
+export { terrainMaterial };

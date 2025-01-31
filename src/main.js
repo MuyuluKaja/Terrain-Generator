@@ -1,5 +1,8 @@
   import * as THREE from 'three';
-  // Importing Simpled
+  // Controls
+  import { setupControls } from './controls.js';  // Import the controls
+
+  // Importing Noise Algorithms
   import { PerlinNoise } from './noise/perlin.js';
   import { SimplexNoise } from './noise/simplex.js';
   import { addProceduralSky } from './sky.js';
@@ -8,7 +11,6 @@
   import * as dat from 'dat.gui'; 
 
   // Instantiating noise algorithms
-
   const perlin = new PerlinNoise();
   const simplex = new SimplexNoise(22);
 
@@ -26,6 +28,17 @@
 
   addProceduralSky(scene);
 
+
+// Set up OrbitControls for camera movement
+const controls = setupControls(camera, renderer);
+
+// Handle window resizing
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+  
   // Terrin params defines
   const params = {
     noiseType: 'perlin',
@@ -149,17 +162,21 @@
 
 
     
-  
 
 
-  generateTerrain(params.noiseType, params.frequency, params.amplitude, params.segments, params.terrainWidth, params.terrainHeight); // Pass width and height
+generateTerrain(params.noiseType, params.frequency, params.amplitude, params.segments, params.terrainWidth, params.terrainHeight); // Pass width and height
+
 
 
   // Renders Scene
   function animate() {
     requestAnimationFrame(animate);
+    // generateTerrain(params.noiseType, params.frequency, params.amplitude, params.segments, params.terrainWidth, params.terrainHeight); // Pass width and height
+    controls.update();
+
     // Update objects here
     terrain.rotation.z += 0.0001; // Rotate around the Y-axis (adjust speed as needed)
+
     renderer.render(scene, camera);
     
   }
