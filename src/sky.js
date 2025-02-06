@@ -1,62 +1,76 @@
 import * as THREE from 'three';
 
+/* This function will add a procedural sky to the terrain, this is inspired by
+https://www.youtube.com/watch?v=Vkbju0GrrXs&ab_channel=CulerDamage
+*/
+export function addSky(scene) {
+    const skyRadius = 500;
+    const sunPosition = new THREE.Vector3(0, 100, 0);
 
-// Function to add a procedural sky shader to the scene
-export function addProceduralSky(scene) {
-    // Create a large sphere that will act as the sky
-    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+    const skyMesh = makeSkyMesh(skyRadius, sunPosition);
 
-    // Define the shader material for the sky
-    const skyMaterial = new THREE.ShaderMaterial({
-        // Define uniforms for the shader
-        uniforms: {
-            // Position of the sun in the sky
-            sunPosition: { value: new THREE.Vector3(0, 100, 0) },
-        },
-        // Vertex shader: Passes world position to the fragment shader
-        vertexShader: `
-            varying vec3 vWorldPosition; // Variable to store world position of the vertex
-
-            void main() {
-                // Transform the vertex position to world space
-                vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-                vWorldPosition = worldPosition.xyz; // Pass world position to the fragment shader
-
-                // Transform the vertex position to screen space
-                gl_Position = projectionMatrix * viewMatrix * worldPosition;
-            }
-        `,
-        // Fragment shader: Calculates the sky color based on the sun's position
-        fragmentShader: `
-            uniform vec3 sunPosition; // The position of the sun in the sky
-            varying vec3 vWorldPosition; // The world position of the current fragment
-
-            void main() {
-                // Calculate the intensity of sunlight based on the angle between the fragment and the sun
-                float intensity = dot(normalize(vWorldPosition), normalize(sunPosition));
-
-                // Define the sky colors:
-                // - Light blue for the base of the sky
-                // - Orange for the area near the sun
-                vec3 skyColor = mix(
-                    vec3(0.8, 0.9, 1.0),  // Light blue (default sky color)
-                    vec3(1.0, 0.5, 0.0),  // Orange (sunset color)
-                    max(intensity, 0.0)   // Blend based on sunlight intensity (clamped to 0+)
-                );
-
-                // Output the calculated sky color
-                gl_FragColor = vec4(skyColor, 1.0);
-            }
-        `,
-        // Render the inside of the sphere by setting the material's side to BackSide
-        side: THREE.BackSide,
-    });
-
-    // Create a mesh with the sky geometry and material
-    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
-
-    // Add the sky mesh to the scene
-    scene.add(sky);
+    scene.add(skyMesh);
 }
 
+// Function to create and return the sky mesh (geometry + material)
+function makeSkyMesh(radius, sunPosition) {
+    const geometry = makeSkyGeometry(radius);
+    const material = makeSkyMaterial(sunPosition);
 
+    return new THREE.Mesh(geometry, material);
+}
+
+// Function to create the sky geometry (sphere)
+function makeSkyGeometry(radius) {
+    return new THREE.SphereGeometry(radius, 32, 32);
+}
+
+// Function to create the shader material for the sky
+function makeSkyMaterial(sunPosition) {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            sunPosition: { value: sunPosition },
+        },
+        vertexShader: getVertexShader(),
+        fragmentShader: getFragmentShader(),
+        side: THREE.BackSide,
+    });
+}
+
+// GLSL code for the vertex shader (transform vertex position to world space)
+function getVertexShader() {
+    return `
+        varying vec3 vWorldPosition;
+
+        void main() {
+            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPosition.xyz;
+
+            gl_Position = projectionMatrix * viewMatrix * worldPosition;
+        }
+    `;
+}
+
+// GLSL code for the fragment shader (calculates sky color based on sun position)
+function getFragmentShader() {
+    return `
+        uniform vec3 sunPosition;
+        varying vec3 vWorldPosition;
+
+        void main() {
+            // Calculate the intensity of sunlight based on the angle between the fragment and the sun
+            float intensity = dot(normalize(vWorldPosition), normalize(sunPosition));
+
+            // Define the sky colors:
+            // Light blue for the base of the sky
+            // Orange for the area near the sun
+            vec3 skyColor = mix(
+                vec3(0.7, 0.8, 1.0),  // Light blue (default sky color)
+                vec3(1.0, 0.5, 0.2),  // Orange (sunset color)
+                max(intensity, 0.0)   // Blend based on sunlight intensity (clamped to 0+)
+            );
+
+            gl_FragColor = vec4(skyColor, 1.0);
+        }
+    `;
+}

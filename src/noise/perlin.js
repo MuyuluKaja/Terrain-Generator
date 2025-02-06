@@ -7,55 +7,44 @@ class PerlinNoise {
             [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1],
         ];
 
-        // Initialize the permutation array with random values
+        // Initialize the permutation table
         for (let i = 0; i < 256; i++) {
             this.perm[i] = Math.floor(Math.random() * 256);
         }
-
-        // Duplicate the permutation array to avoid overflow
         for (let i = 0; i < 256; i++) {
             this.perm[256 + i] = this.perm[i];
         }
     }
 
-    // Fade function (smooths the transitions)
     fade(t) {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
 
-    // Linear interpolation between two values
     lerp(a, b, t) {
         return (1 - t) * a + t * b;
     }
 
-    // Gradient function calculates the dot product of gradient and position
     grad(hash, x, y, z) {
-        const g = this.grad3[hash % 12]; // Use hash % 12 to avoid out-of-bounds errors
+        const g = this.grad3[hash % 12];
         return g[0] * x + g[1] * y + g[2] * z;
     }
 
-    // Perlin noise function
     noise(x, y, z) {
-        // Determine grid cell coordinates
         const X = Math.floor(x) & 255;
         const Y = Math.floor(y) & 255;
         const Z = Math.floor(z) & 255;
 
-        // Local coordinates within the cell
         x -= Math.floor(x);
         y -= Math.floor(y);
         z -= Math.floor(z);
 
-        // Compute fade curves for each dimension
         const u = this.fade(x);
         const v = this.fade(y);
         const w = this.fade(z);
 
-        // Hash coordinates of the 8 cube corners
         const A = this.perm[X] + Y, AA = this.perm[A] + Z, AB = this.perm[A + 1] + Z;
         const B = this.perm[X + 1] + Y, BA = this.perm[B] + Z, BB = this.perm[B + 1] + Z;
 
-        // Add contributions from each corner of the cube
         return this.lerp(
             this.lerp(this.lerp(this.grad(this.perm[AA], x, y, z), this.grad(this.perm[BA], x - 1, y, z), u),
                       this.lerp(this.grad(this.perm[AB], x, y - 1, z), this.grad(this.perm[BB], x - 1, y - 1, z), u), v),
@@ -64,7 +53,46 @@ class PerlinNoise {
             w
         );
     }
+
+    // **Fractal Noise for Smooth Terrain**
+    fractalNoise(x, y, z, octaves = 6, persistence = 0.5, lacunarity = 2.0) {
+        let total = 0;
+        let amplitude = 1;
+        let frequency = 1;
+        let maxValue = 0;
+
+        for (let i = 0; i < octaves; i++) {
+            total += this.noise(x * frequency, y * frequency, z * frequency) * amplitude;
+            maxValue += amplitude;
+
+            amplitude *= persistence; 
+            frequency *= lacunarity;
+        }
+
+        return total / maxValue; 
+    }
+
+    // **Ridge Noise for Sharp Peaks (Mountainous Terrain)**
+    ridgeNoise(x, y, z, octaves = 6, persistence = 0.5, lacunarity = 2.0) {
+        let total = 0;
+        let amplitude = 1;
+        let frequency = 1;
+        let maxValue = 0;
+
+        for (let i = 0; i < octaves; i++) {
+            let noiseValue = this.noise(x * frequency, y * frequency, z * frequency);
+            noiseValue = 1 - Math.abs(noiseValue); // Invert for peaks
+            noiseValue *= noiseValue; // Exaggerate peaks
+
+            total += noiseValue * amplitude;
+            maxValue += amplitude;
+
+            amplitude *= persistence; 
+            frequency *= lacunarity;
+        }
+
+        return total / maxValue; 
+    }
 }
 
-// Export the PerlinNoise class
 export { PerlinNoise };
