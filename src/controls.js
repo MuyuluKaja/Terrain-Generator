@@ -31,7 +31,7 @@ export function makeControls(camera, renderer) {
 export function makeButtons() {
   const gui = new dat.GUI();
   gui.add(terrain_parameters, 'noise_type', ['perlin', 'simplex']).name('Noise Type').onChange( value => {
-    console.log("Changed segments to value: ", value);
+    console.log("Changed noise type to value: ", value);
     terrain_parameters.regenerate();
   }); 
 
@@ -60,12 +60,12 @@ export function makeButtons() {
   });  
 
   gui.add(terrain_parameters, 'segments', 1, 1000).step(1).name('Segments').onChange(value => {
-    console.log("Changed size to value: ", value);
+    console.log("Changed segments to value: ", value);
     terrain_parameters.regenerate();
   });
 
   gui.add(terrain_parameters, 'wireframe').name('Wireframe?').onChange(value => {
-    console.log("Toggled checkbox to value: ", value);
+    console.log("Toggled wireframe to value: ", value);
     terrain_parameters.wireframe = value; });
   gui.add(terrain_parameters, 'regenerate').name('Regenerate Terrain');
 
