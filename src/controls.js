@@ -66,7 +66,8 @@ export function makeButtons() {
 
   gui.add(terrain_parameters, 'wireframe').name('Wireframe?').onChange(value => {
     console.log("Toggled wireframe to value: ", value);
-    terrain_parameters.wireframe = value; });
+    terrain_parameters.wireframe = value; 
+    terrain_parameters.regenerate();});
   gui.add(terrain_parameters, 'regenerate').name('Regenerate Terrain');
 
 }
