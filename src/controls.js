@@ -1,5 +1,5 @@
-import * as dat from 'dat.gui';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import * as dat from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.7/build/dat.gui.min.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.140.0/examples/jsm/controls/OrbitControls.js';
 import { terrain_parameters } from './main';
 
 export function makeControls(camera, renderer) {
