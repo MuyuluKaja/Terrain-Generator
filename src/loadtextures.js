@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.module.js';
+import * as THREE from 'three';
 
 // loader for terrain
 const loader = new THREE.TextureLoader();
