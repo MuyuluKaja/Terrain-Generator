@@ -5,7 +5,7 @@ import { addTextures, makeMaterial } from './loadtextures.js';
 // instantiating noise algorithms
 import { PerlinNoise } from './noise/perlin.js';
 import { SimplexNoise } from './noise/simplex.js';
-import Stats from "stats.js";
+import Stats from 'stats.js';
 
 //initialising stats to show fps
 const stats = new Stats();
