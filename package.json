@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://muyulukaja.github.io/Terrain-Generator/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,5 +22,4 @@
     "stats.js": "^0.17.0",
     "three": "^0.172.0"
   }
-  
 }
