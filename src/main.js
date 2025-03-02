@@ -1,11 +1,11 @@
-import * as THREE from 'three';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.module.js';
 import { makeControls, makeButtons } from './controls.js';
 import { addSky } from './sky.js';
 import { addTextures, makeMaterial } from './loadtextures.js';
 // instantiating noise algorithms
 import { PerlinNoise } from './noise/perlin.js';
 import { SimplexNoise } from './noise/simplex.js';
-import Stats from "stats.js";
+import Stats from 'https://cdn.jsdelivr.net/npm/stats.js@0.17.0/build/stats.min.js';
 
 //initialising stats to show fps
 const stats = new Stats();
