@@ -13,13 +13,10 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
-<<<<<<< HEAD
-    "save-dev": "^0.0.1-security",
-=======
     "noisejs": "^2.1.0",
     "save-dev": "^0.0.1-security",
     "simplex-noise": "^4.0.3",
->>>>>>> 31bef91 (Fixed controls, added new textures, added settomhs for biomes , reorganised code)
+    "stats.js": "^0.17.0",
     "three": "^0.172.0"
   }
 }

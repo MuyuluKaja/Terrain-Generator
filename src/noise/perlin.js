@@ -1,23 +1,23 @@
 class PerlinNoise {
     constructor() {
-        this.perm = [];
-        this.grad3 = [
+        this.permutations = [];
+        this.gradients = [
             [1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0],
             [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1],
             [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1],
         ];
 
-        // Initialize the permutation table
+        // Initialize the permutations table
         for (let i = 0; i < 256; i++) {
-            this.perm[i] = Math.floor(Math.random() * 256);
+            this.permutations[i] = Math.floor(Math.random() * 256);
         }
         for (let i = 0; i < 256; i++) {
-            this.perm[256 + i] = this.perm[i];
+            this.permutations[256 + i] = this.permutations[i];
         }
     }
 
     fade(t) {
-        return t * t * t * (t * (t * 6 - 15) + 10);
+        return (6 * t * t * t * t * t) - (15 * t * t * t * t) + (10 * t * t * t);
     }
 
     lerp(a, b, t) {
@@ -25,7 +25,7 @@ class PerlinNoise {
     }
 
     grad(hash, x, y, z) {
-        const g = this.grad3[hash % 12];
+        const g = this.gradients[hash % 12];
         return g[0] * x + g[1] * y + g[2] * z;
     }
 
@@ -42,14 +42,14 @@ class PerlinNoise {
         const v = this.fade(y);
         const w = this.fade(z);
 
-        const A = this.perm[X] + Y, AA = this.perm[A] + Z, AB = this.perm[A + 1] + Z;
-        const B = this.perm[X + 1] + Y, BA = this.perm[B] + Z, BB = this.perm[B + 1] + Z;
+        const A = this.permutations[X] + Y, AA = this.permutations[A] + Z, AB = this.permutations[A + 1] + Z;
+        const B = this.permutations[X + 1] + Y, BA = this.permutations[B] + Z, BB = this.permutations[B + 1] + Z;
 
         return this.lerp(
-            this.lerp(this.lerp(this.grad(this.perm[AA], x, y, z), this.grad(this.perm[BA], x - 1, y, z), u),
-                      this.lerp(this.grad(this.perm[AB], x, y - 1, z), this.grad(this.perm[BB], x - 1, y - 1, z), u), v),
-            this.lerp(this.lerp(this.grad(this.perm[AA + 1], x, y, z - 1), this.grad(this.perm[BA + 1], x - 1, y, z - 1), u),
-                      this.lerp(this.grad(this.perm[AB + 1], x, y - 1, z - 1), this.grad(this.perm[BB + 1], x - 1, y - 1, z - 1), u), v),
+            this.lerp(this.lerp(this.grad(this.permutations[AA], x, y, z), this.grad(this.permutations[BA], x - 1, y, z), u),
+                      this.lerp(this.grad(this.permutations[AB], x, y - 1, z), this.grad(this.permutations[BB], x - 1, y - 1, z), u), v),
+            this.lerp(this.lerp(this.grad(this.permutations[AA + 1], x, y, z - 1), this.grad(this.permutations[BA + 1], x - 1, y, z - 1), u),
+                      this.lerp(this.grad(this.permutations[AB + 1], x, y - 1, z - 1), this.grad(this.permutations[BB + 1], x - 1, y - 1, z - 1), u), v),
             w
         );
     }
@@ -73,7 +73,7 @@ class PerlinNoise {
     }
 
     // **Ridge Noise for Sharp Peaks (Mountainous Terrain)**
-    ridgeNoise(x, y, z, octaves = 6, persistence = 0.5, lacunarity = 2.0) {
+    ridgeNoise(x, y, z, octaves = 16, persistence = 0.5, lacunarity = 2.0) {
         let total = 0;
         let amplitude = 1;
         let frequency = 1;
