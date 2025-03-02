@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.module.js';
+import * as THREE from 'three';
 
 /* This function will add a procedural sky to the terrain, this is inspired by
 https://www.youtube.com/watch?v=Vkbju0GrrXs&ab_channel=CulerDamage
