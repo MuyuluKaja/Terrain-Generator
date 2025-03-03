@@ -5,7 +5,6 @@
 
 ## Table of Contents
 
-* [Terrain-Generator](#terrain-generator)
 * [Requirements](#requirements)
 * [How to Run the program](#how-to-run-the-program)
 * [About the project itself](#about-the-project-itself)
