@@ -9,7 +9,6 @@
 * [How to Run the program](#how-to-run-the-program)
 * [About the project itself](#about-the-project-itself)
     * [What is Terrain Generation?](#what-is-terrain-generation)
-* [WWW (What went well)](#www-what-went-well)
 * [Issues + Further Developments](#issues-further-developmentfuture-plans)
     * [Future Plans](#future-plans)
 * [References Used](#references-used)
