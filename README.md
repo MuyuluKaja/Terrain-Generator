@@ -12,7 +12,6 @@
     * [What is Terrain Generation?](#what-is-terrain-generation)
 * [WWW (What went well)](#www-what-went-well)
 * [Issues + Further Developments](#issues-further-developmentfuture-plans)
-    * [Issues:](#issues)
     * [Future Plans](#future-plans)
 * [References Used](#references-used)
 
